@@ -1,0 +1,27 @@
+{{#each this}}
+<li class="galleryItem">
+    <a href="{{this.largeImageURL}}" class="galleryLink">
+        <img class="galleryImage" src="{{this.webformatURL}}" alt="{{this.tags}}">
+    </a>
+    <div class="photoDescriptionContainer">
+        <ul class="photoDescriptionList">
+            <li class="photoDescription">
+                Likes: 
+                <span class="statistics">{{this.likes}}</span>
+            </li>
+            <li class="photoDescription">
+                Views: 
+                <span class="statistics">{{this.views}}</span>
+            </li>
+            <li class="photoDescription">
+                Comments: 
+                <span class="statistics">{{this.comments}}</span>
+            </li>
+            <li class="photoDescription">
+                Downloads: 
+                <span class="statistics">{{this.downloads}}</span>
+            </li>
+        </ul>
+    </div>
+</li>
+{{/each}}
