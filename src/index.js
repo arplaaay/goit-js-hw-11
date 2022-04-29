@@ -1,45 +1,9 @@
-import axios from 'axios';
 import Notiflix from 'notiflix';
 import _ from 'lodash';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import galleryMarkup from './image-gallery.hbs';
-
-class NewsApiService {
-    constructor() {
-        this.page = 1;
-        this.searchQuery = '';
-    }
-
-    async fetchImages() {
-        try {
-            const response = await axios.get(
-                `${BASE_URL}?key=${API_KEY}&q=${this.query
-                }&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}`,
-            );
-            this.incrementPage();
-            return response.data;
-        } catch (error) {
-            onFetchError;
-        }
-    }
-
-    incrementPage() {
-        this.page += 1;
-    }
-
-    resetPage() {
-        this.page = 1;
-    }
-
-    get query() {
-        return this.searchQuery;
-    }
-
-    set query(newQuery) {
-        this.searchQuery = newQuery;
-    }
-}
+import NewsApiService from './templates/api-service';
 
 const refs = {
     form: document.querySelector('.search-form'),
@@ -49,14 +13,11 @@ const refs = {
     galleryButton: document.querySelector('#galleryButton'),
 };
 
-const API_KEY = '24441832-e1f7ed32578d6107b72c2a05f';
-const BASE_URL = 'https://pixabay.com/api/';
-const PER_PAGE = 20;
-const newsApiService = new NewsApiService();
-
 refs.form.addEventListener('submit', onSubmitForm);
 refs.gallery.addEventListener('click', onPhotoClick);
 refs.galleryButton.addEventListener('click', onLoadMore);
+
+const newsApiService = new NewsApiService();
 
 function onSubmitForm(e) {
     e.preventDefault();
@@ -64,8 +25,16 @@ function onSubmitForm(e) {
     newsApiService.resetPage();
     refs.gallery.innerHTML = '';
     newsApiService.query = e.currentTarget.elements.searchQuery.value;
-    let response = newsApiService.fetchImages();
-    response.then(renderImagesPreview);
+
+    const elements = e.currentTarget.elements;
+
+    if (elements.searchQuery.value.length > 1) {
+        let response = newsApiService.fetchImages();
+        response.then(renderImagesPreview);
+    } else {
+        Notiflix.Notify.info("Please, enter something to find.");
+        refs.galleryButton.remove();
+    }
 }
 
 function onLoadMore() {
